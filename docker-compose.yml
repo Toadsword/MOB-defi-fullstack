@@ -1,0 +1,45 @@
+services:
+  # ---------------------
+  # Vue.js frontend
+  # ---------------------
+  frontend:
+    image: node:20
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - VITE_API_URL=http://localhost:8080
+
+  # ---------------------
+  # PHP backend (API)
+  # ---------------------
+  php:
+    image: php:8.2-fpm
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    command: sh -c "php -S 0.0.0.0:80 -t /var/www/html"
+
+  # ---------------------
+  # PostgreSQL database
+  # ---------------------
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:
