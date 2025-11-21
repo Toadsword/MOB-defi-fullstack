@@ -28,3 +28,29 @@ Une fois vérifié et accédé, j'ai opté pour la même option, mais via docker
 ## 2. Création de la base de données
 
 Le fichier openapi.yml donne une indication très claire de ce qui est attendu de l'API REST, et ainsi de la structure de la base de donnée attendu. 
+
+J'ai ainsi créé un fichier `./db/init.sql` qui permet de créer la base de données suivante :
+```
+CREATE TABLE stations (
+    id SERIAL PRIMARY KEY,
+    shortName VARCHAR(5) NOT NULL,
+    longName VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE distances (
+    fk_parent_stations INTEGER NOT NULL,
+    fk_child_stations INTEGER NOT NULL,
+    distance FLOAT,
+
+    CONSTRAINT fk_parent FOREIGN KEY (fk_parent_stations)
+        REFERENCES stations(id),
+
+    CONSTRAINT fk_child FOREIGN KEY (fk_child_stations)
+        REFERENCES stations(id)
+);
+```
+
+Configuré Docker pour qu'il exécute le script automatiquement lors d'un docker compose up.
+Réalisé un test `test_init_db.sh` qui permet de vérifier le bon fonctionnement de la création de la base de données
+
+## 3. Peupler la base de données

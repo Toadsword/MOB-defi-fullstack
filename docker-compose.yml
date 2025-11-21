@@ -12,6 +12,7 @@ services:
       - ./frontend:/app
     environment:
       - VITE_API_URL=http://localhost:8080
+      - CHOKIDAR_USEPOLLING=true
 
   # ---------------------
   # PHP backend (API)
@@ -33,13 +34,18 @@ services:
   db:
     image: postgres:16
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: admin_user
+      POSTGRES_PASSWORD: admin_pass
       POSTGRES_DB: mydb
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
-
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin_user -d mydb"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 volumes:
   pgdata:
