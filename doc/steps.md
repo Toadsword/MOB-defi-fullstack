@@ -76,6 +76,13 @@ J'ai la chance d'avoir un ami pratiquant Vues.js professionnelement qui m'a expl
 
 Ce qui laisse libre choix quand à la structure de l'interface utilisateur, au besoin.
 
+Pour créer la base, l'IA étant super pour cette tâche, je l'ai employé pour générer une interface de base que je pourrais manuellement modifier à ma guise.
+
+Ce qui donne un premier rendu :
+![alt text](./img/FirstScreen.png)
+
+Il manque énormément d'éléments, notamment une liste déroulante ou de l'autocompletion sur les champs, ainsi qu'une interface plus belle, mais à nouveau, on cherche le fonctionnel pour tester l'API.
+
 ### 4.3 La table d'analytics
 
 Via AnalyticDistance et AnalyticDistanceList, je comprends qu'il y a un besoin de stocker les résultats fournis à l'utilisateur, notamment afin de vérifier son bon fonctionnement, mais également afin de savoir quels trajets sont les plus intéressants et à valoriser dans le logiciel. Cela implique la création d'une nouvelle table dans la base de données :

@@ -1,47 +1,31 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <div class="container">
+    <h1>Transport Distance App</h1>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it !" />
-    </div>
-  </header>
+    <CreateRouteForm @created="onRouteCreated" />
 
-  <main>
-    <TheWelcome />
-  </main>
+    <hr />
+
+    <AnalyticsView />
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
+<script setup>
+import CreateRouteForm from "./components/CreateRouteForm.vue";
+import AnalyticsView from "./components/AnalyticsView.vue";
+
+function onRouteCreated(route) {
+  console.log("Route created:", route);
 }
+</script>
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+<style>
+body {
+  font-family: Arial, sans-serif;
 }
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
 }
 </style>
