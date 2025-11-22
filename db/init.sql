@@ -18,6 +18,16 @@ CREATE TABLE distances (
         REFERENCES stations(shortName)
 );
 
+CREATE TABLE anayltics_routes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    from_station_id VARCHAR(5) NOT NULL REFERENCES stations(shortName),
+    to_station_id VARCHAR(5) NOT NULL REFERENCES stations(shortName),
+    analytic_code VARCHAR(255) NOT NULL,
+    distance_km FLOAT NOT NULL,
+    path TEXT[] NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- Insertion des données
 INSERT INTO stations (id, shortName, longName) VALUES
     (1, 'ALLI', 'Allières'),

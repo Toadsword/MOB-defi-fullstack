@@ -60,3 +60,35 @@ Les fichiers stations.json et distances.json donnent toutes les données nécess
 J'ai ajouté les requêtes d'INSERT dans init_db.sql et testé son bon fonctionnement avec le test réalisé au préalable, ainsi qu'adapté pour les nouvelles données
 
 J'ai également apporté une modification à la struature de la base de données pour ajouter le nom du moyen de transport, qui n'était pas géré auparavent
+
+## 4. Créer une première l'interface fonctionnelle
+
+### 4.1 Chemins HTTPs
+Pour l'interface j'ai imaginé tout d'abord une interface fonctionnelle qui permet de réaliser le squelette du site internet, afin de pouvoir vérifier et tester les besoins
+Le fichier ´openapi.yml´ indique l'intention de développement des différentes pages. J'en déduis les informations suivantes :
+- /routes - Permet la requête d'un trajet entre un point A et B
+- /stats/distances - L'affichage du trajet demandé, avec une somme calculée des distances parcourues (en bonus)
+
+### 4.2 les objets Vues.js
+J'ai la chance d'avoir un ami pratiquant Vues.js professionnelement qui m'a expliqué en bref la structure du framework : C'est une approche orienté objet de la création de composants web. Avec cette base, j'ai facilement pu déterminer, toujours avec le fichier ´openapi.yml´, quels objets et structure étaiend demandés :
+- securitySchemes : Pour accompagner chaque page avec des informations de sécurités : pour l'authentification par exemple
+- schemas : toutes les structures des requêtes pour l'API Rest
+
+Ce qui laisse libre choix quand à la structure de l'interface utilisateur, au besoin.
+
+### 4.3 La table d'analytics
+
+Via AnalyticDistance et AnalyticDistanceList, je comprends qu'il y a un besoin de stocker les résultats fournis à l'utilisateur, notamment afin de vérifier son bon fonctionnement, mais également afin de savoir quels trajets sont les plus intéressants et à valoriser dans le logiciel. Cela implique la création d'une nouvelle table dans la base de données :
+´´´
+CREATE TABLE routes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    from_station_id VARCHAR(5) NOT NULL REFERENCES stations(shortName),
+    to_station_id VARCHAR(5) NOT NULL REFERENCES stations(shortName),
+    analytic_code VARCHAR(255) NOT NULL,
+    distance_km FLOAT NOT NULL,
+    path TEXT[] NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+´´´
+
+Et ajouté cette table dans le test
