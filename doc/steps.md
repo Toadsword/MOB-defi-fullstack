@@ -33,7 +33,7 @@ J'ai ainsi créé un fichier `./db/init.sql` qui permet de créer la base de don
 ```
 CREATE TABLE stations (
     id SERIAL PRIMARY KEY,
-    shortName VARCHAR(5) NOT NULL,
+    shortName VARCHAR(5) UNIQUE NOT NULL,
     longName VARCHAR(255) NOT NULL
 );
 
@@ -43,10 +43,10 @@ CREATE TABLE distances (
     distance FLOAT,
 
     CONSTRAINT fk_parent FOREIGN KEY (fk_parent_stations)
-        REFERENCES stations(id),
+        REFERENCES stations(shortName),
 
     CONSTRAINT fk_child FOREIGN KEY (fk_child_stations)
-        REFERENCES stations(id)
+        REFERENCES stations(shortName)
 );
 ```
 
@@ -54,3 +54,9 @@ Configuré Docker pour qu'il exécute le script automatiquement lors d'un docker
 Réalisé un test `test_init_db.sh` qui permet de vérifier le bon fonctionnement de la création de la base de données
 
 ## 3. Peupler la base de données
+
+Les fichiers stations.json et distances.json donnent toutes les données nécessaires à l'exercice. Etant structurés parfaitement pour être inséré dans une base de données, je converti manuellement avec notepad++ en utilisant le remplacement étendu pour formatter le json en sql.
+
+J'ai ajouté les requêtes d'INSERT dans init_db.sql et testé son bon fonctionnement avec le test réalisé au préalable, ainsi qu'adapté pour les nouvelles données
+
+J'ai également apporté une modification à la struature de la base de données pour ajouter le nom du moyen de transport, qui n'était pas géré auparavent

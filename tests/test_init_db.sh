@@ -13,7 +13,7 @@ until [ "$(docker inspect -f '{{.State.Health.Status}}' defi-fullstack-db-1)" ==
   echo "Waiting for DB container to be healthy..."
 done
 
-until docker exec defi-fullstack-db-1 pg_isready -U admin_user -d mydb > /dev/null 2>&1; do
+until docker exec defi-fullstack-db-1 pg_isready -U admin_user -d mydb; do
   sleep 1
   echo " Waiting for Postgres to be ready..."
 done
@@ -32,9 +32,14 @@ docker exec defi-fullstack-db-1 psql -U admin_user -d mydb -c "\dt distances" | 
   || (echo "✘ distances does NOT exist" && sleep 5 && exit 1)
 
 # Test inserted data
-docker exec defi-fullstack-db-1 psql -U admin_user -d mydb -c "SELECT * FROM distances;" | grep 10.5 >/dev/null \
-  && echo "✔ Inserted data OK" \
-  || (echo "✘ Data not inserted correctly" && sleep 5 && exit 1)
+docker exec defi-fullstack-db-1 psql -U admin_user -d mydb -c "SELECT * FROM stations;" | grep CHCO \
+  && echo "✔ Inserted data into stations OK" \
+  || (echo "✘ Data not inserted into stations correctly" && sleep 5 && exit 1)
+
+# Test inserted data
+docker exec defi-fullstack-db-1 psql -U admin_user -d mydb -c "SELECT * FROM distances;" | grep 1.68 \
+  && echo "✔ Inserted data into distances OK" \
+  || (echo "✘ Data not inserted into distances correctly" && sleep 5 && exit 1)
 
 echo "All DB init tests passed!"
 sleep 5
