@@ -10,18 +10,18 @@ N'étant pas familier avec la création d'environnement Docker et Vue, j'ai d'ab
 Mon IDE de préférence est : Visual Studio Code
 
 J'ai choisis d'adopter la structure de dossier suivante :
-Dossier ´frontend´ : où vue.js sera installé
-Dossier ´backend´ : où je vais référencer ma création de base de données et y enregistrer mes requêtes importantes
+Dossier `frontend` : où vue.js sera installé
+Dossier `backend` : où je vais référencer ma création de base de données et y enregistrer mes requêtes importantes
 
 N'ayant aucune idée de si c'est la meilleure structure au long terme, elle va cependant m'aider dans un premier temps à réaliser mon docker-compose, et me permettre de séparer la vue du back.
 
-J'ai ainsi installé vue.js dans le dossier ´frontend´, et testé qu'il fonctionne correctement via les commandes :
-´´´
+J'ai ainsi installé vue.js dans le dossier `frontend`, et testé qu'il fonctionne correctement via les commandes :
+```
 npm create vue@latest
 cd ./frontend/
 npm install
 npm run dev
-´´´
+```
 
 Une fois vérifié et accédé, j'ai opté pour la même option, mais via docker, en configurant un docker-compose simple qui comprend le lancement de PostgresDB en plus de l'environnement Vue.js
 
@@ -65,12 +65,12 @@ J'ai également apporté une modification à la struature de la base de données
 
 ### 4.1 Chemins HTTPs
 Pour l'interface j'ai imaginé tout d'abord une interface fonctionnelle qui permet de réaliser le squelette du site internet, afin de pouvoir vérifier et tester les besoins
-Le fichier ´openapi.yml´ indique l'intention de développement des différentes pages. J'en déduis les informations suivantes :
+Le fichier `openapi.yml` indique l'intention de développement des différentes pages. J'en déduis les informations suivantes :
 - /routes - Permet la requête d'un trajet entre un point A et B
 - /stats/distances - L'affichage du trajet demandé, avec une somme calculée des distances parcourues (en bonus)
 
 ### 4.2 les objets Vues.js
-J'ai la chance d'avoir un ami pratiquant Vues.js professionnelement qui m'a expliqué en bref la structure du framework : C'est une approche orienté objet de la création de composants web. Avec cette base, j'ai facilement pu déterminer, toujours avec le fichier ´openapi.yml´, quels objets et structure étaiend demandés :
+J'ai la chance d'avoir un ami pratiquant Vues.js professionnelement qui m'a expliqué en bref la structure du framework : C'est une approche orienté objet de la création de composants web. Avec cette base, j'ai facilement pu déterminer, toujours avec le fichier `openapi.yml`, quels objets et structure étaiend demandés :
 - securitySchemes : Pour accompagner chaque page avec des informations de sécurités : pour l'authentification par exemple
 - schemas : toutes les structures des requêtes pour l'API Rest
 
@@ -86,7 +86,7 @@ Il manque énormément d'éléments, notamment une liste déroulante ou de l'aut
 ### 4.3 La table d'analytics
 
 Via AnalyticDistance et AnalyticDistanceList, je comprends qu'il y a un besoin de stocker les résultats fournis à l'utilisateur, notamment afin de vérifier son bon fonctionnement, mais également afin de savoir quels trajets sont les plus intéressants et à valoriser dans le logiciel. Cela implique la création d'une nouvelle table dans la base de données :
-´´´
+```
 CREATE TABLE routes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     from_station_id VARCHAR(5) NOT NULL REFERENCES stations(shortName),
@@ -96,6 +96,6 @@ CREATE TABLE routes (
     path TEXT[] NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-´´´
+```
 
 Et ajouté cette table dans le test
