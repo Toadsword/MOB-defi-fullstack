@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/../db_connection.php';
 require_once __DIR__ . '/../utils/json.php';
 
 $params = $_GET;

@@ -3,11 +3,23 @@
     <h2>Create Route</h2>
 
     <form @submit.prevent="submitForm">
-      <label>From Station ID:</label>
-      <input v-model="fromStationId" required />
+      <label>From Station ID:
+        <select v-model="fromStationId">
+          <option value="" disabled>Select station</option>
+          <option v-for="s in stations" :key="s.shortName" :value="s.shortName">
+            {{ s.longName }} ({{ s.shortName }})
+          </option>
+        </select>
+      </label>
 
-      <label>To Station ID:</label>
-      <input v-model="toStationId" required />
+      <label>To Station ID:
+        <select v-model="toStationId">
+          <option value="" disabled>Select station</option>
+          <option v-for="s in stations" :key="s.shortName" :value="s.shortName">
+            {{ s.longName }} ({{ s.shortName }})
+          </option>
+        </select>
+      </label>
 
       <label>Analytic Code:</label>
       <input v-model="analyticCode" required />
@@ -20,9 +32,30 @@
   </div>
 </template>
 
+<script>
+export default {
+  name: 'StationDropdowns',
+  data() {
+    return {
+      stations: [],
+      fromStationId: '',
+      toStationId: ''
+    };
+  },
+  mounted() {
+    // Ajuster l'URL si votre endpoint est ailleurs
+    fetch('/api/stations.php')
+      .then(res => res.json())
+      .then(data => { this.stations = data; })
+      .catch(err => { console.error('Failed to load stations', err); });
+  }
+};
+</script>
+
 <script setup>
 import { ref } from "vue";
 import { createRoute } from "../api.js";
+
 
 const fromStationId = ref("");
 const toStationId = ref("");
