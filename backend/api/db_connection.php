@@ -1,25 +1,15 @@
 <?php
 function db() {
-    static $pdo = null;
-    $host = getenv('DB_HOST') ?: '127.0.0.1';
-    $port = getenv('DB_PORT') ?: 5432;
-    $db   = getenv('DB_NAME');
-    $user = getenv('DB_USER');
-    $pass = getenv('DB_PASS');
+    $host = 'db';  // Docker service name instead of localhost
+    $port = 5432;
+    $db = getenv('DB_NAME') ?: 'mydb';
+    $user = getenv('DB_USER') ?: 'admin_user';
+    $pass = getenv('DB_PASS') ?: 'admin_pass';
+    
     $dsn = "pgsql:host=$host;port=$port;dbname=$db;";
-
-
-    if ($pdo === null) {
-        $pdo = new PDO(
-            "$dsn",
-            "$user",
-            "$pass",
-            [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-            ]
-        );
-    }
-
-    return $pdo;
+    return new PDO($dsn, $user, $pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
 }
+?>

@@ -6,8 +6,8 @@
       <label>From Station ID:
         <select v-model="fromStationId">
           <option value="" disabled>Select station</option>
-          <option v-for="s in stations" :key="s.shortName" :value="s.shortName">
-            {{ s.longName }} ({{ s.shortName }})
+          <option v-for="s in stations" :key="s.shortname" :value="s.shortname">
+            {{ s.longname }} ({{ s.shortname }})
           </option>
         </select>
       </label>
@@ -15,8 +15,8 @@
       <label>To Station ID:
         <select v-model="toStationId">
           <option value="" disabled>Select station</option>
-          <option v-for="s in stations" :key="s.shortName" :value="s.shortName">
-            {{ s.longName }} ({{ s.shortName }})
+          <option v-for="s in stations" :key="s.shortname" :value="s.shortname">
+            {{ s.longname }} ({{ s.shortname }})
           </option>
         </select>
       </label>
@@ -32,37 +32,37 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'StationDropdowns',
-  data() {
-    return {
-      stations: [],
-      fromStationId: '',
-      toStationId: ''
-    };
-  },
-  mounted() {
-    // Ajuster l'URL si votre endpoint est ailleurs
-    fetch('/api/stations.php')
-      .then(res => res.json())
-      .then(data => { this.stations = data; })
-      .catch(err => { console.error('Failed to load stations', err); });
-  }
-};
-</script>
-
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { createRoute } from "../api.js";
 
-
+const stations = ref([]);
 const fromStationId = ref("");
 const toStationId = ref("");
 const analyticCode = ref("");
 
 const response = ref(null);
 const error = ref(null);
+
+onMounted(async () => {
+  try {
+    const res = await fetch("/api/stations.php");
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    
+    const text = await res.text();
+    console.log("Raw response:", text);
+    
+    const data = JSON.parse(text);
+    console.log("Parsed data:", data);
+    console.log("Data type:", typeof data, "Is array:", Array.isArray(data));
+    
+    stations.value = Array.isArray(data) ? data : data.stations || [];
+    console.log("Stations assigned:", stations.value);
+  } catch (err) {
+    console.error("Failed to load stations:", err);
+    error.value = "Failed to load stations: " + err.message;
+  }
+});
 
 async function submitForm() {
   error.value = null;
@@ -79,7 +79,6 @@ async function submitForm() {
       error.value = res.message;
     } else {
       response.value = res;
-      emit("created", res);
     }
   } catch (err) {
     error.value = "Network or server error";
