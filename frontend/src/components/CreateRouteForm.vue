@@ -46,7 +46,7 @@ const error = ref(null);
 
 onMounted(async () => {
   try {
-    const res = await fetch("/api/stations.php");
+    const res = await fetch("/api/stations");
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     
     const text = await res.text();    

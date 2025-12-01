@@ -11,6 +11,12 @@
         <option value="year">Year</option>
       </select>
 
+      <label>From Date: </label>
+      <input type="date" v-model="fromDate" />
+
+      <label>To Date: </label>
+      <input type="date" v-model="toDate" />
+
       <button @click="load">Load</button>
     </div>
 
@@ -46,13 +52,19 @@ import { fetchAnalytics } from "../api.js";
 
 const items = ref([]);
 const groupBy = ref("none");
+const fromDate = ref(""); // New ref for from date
+const toDate = ref("");   // New ref for to date
 const error = ref(null);
 
 async function load() {
   error.value = null;
 
   try {
-    const res = await fetchAnalytics({ groupBy: groupBy.value });
+    const res = await fetchAnalytics({ 
+      groupBy: groupBy.value,
+      fromDate: fromDate.value, // Include fromDate
+      toDate: toDate.value      // Include toDate
+    });
     items.value = res.items;
   } catch (err) {
     error.value = "Failed to load analytics";

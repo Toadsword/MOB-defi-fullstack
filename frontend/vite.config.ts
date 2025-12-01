@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://php:80',
+        target: 'http://php:80', // Point to the PHP service
         changeOrigin: true
       }
     }
