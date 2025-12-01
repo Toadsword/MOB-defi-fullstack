@@ -49,15 +49,9 @@ onMounted(async () => {
     const res = await fetch("/api/stations.php");
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     
-    const text = await res.text();
-    console.log("Raw response:", text);
-    
+    const text = await res.text();    
     const data = JSON.parse(text);
-    console.log("Parsed data:", data);
-    console.log("Data type:", typeof data, "Is array:", Array.isArray(data));
-    
     stations.value = Array.isArray(data) ? data : data.stations || [];
-    console.log("Stations assigned:", stations.value);
   } catch (err) {
     console.error("Failed to load stations:", err);
     error.value = "Failed to load stations: " + err.message;
