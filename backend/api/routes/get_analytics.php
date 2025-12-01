@@ -2,52 +2,53 @@
 require_once __DIR__ . '/../db_connection.php';
 require_once __DIR__ . '/../utils/json.php';
 
-$params = $_GET;
+$params = json_decode(file_get_contents('php://input'), true) ?? [];
 
-$from_date = $params["fromDate"] ?? null;
-$to_date = $params["toDate"] ?? null;
-$group = $params["groupBy"] ?? "none";
+$from_date = !empty($params["fromDate"]) ? $params["fromDate"] : null;
+$to_date = !empty($params["toDate"]) ? $params["toDate"] : null;
 
-$groupSql = match($group) {
-    "day" => "TO_CHAR(created_at, 'YYYY-MM-DD')",
-    "month" => "TO_CHAR(created_at, 'YYYY-MM')",
-    "year" => "TO_CHAR(created_at, 'YYYY')",
-    default => "NULL"
-};
+$where = [];
+$sql_params = [];
+
+//Adding where statement only if the parameter exists
+if ($from_date) {
+    $where[] = "created_at >= :from_date::timestamp";
+    $sql_params[':from_date'] = $from_date;
+}
+if ($to_date) {
+    $where[] = "created_at <= :to_date::timestamp";
+    $sql_params[':to_date'] = $to_date;
+}
+
+$where_sql = $where ? "WHERE " . implode(" AND ", $where) : "";
 
 $sql = "
-    SELECT analytic_code,
-           SUM(distance_km) AS total,
-           MIN(created_at)::date AS start_date,
-           MAX(created_at)::date AS end_date,
-           $groupSql AS grp
+    SELECT 
+        from_station_id,
+        to_station_id,
+        SUM(distance_km) AS total_distance,
+        COUNT(*) AS route_taken_count 
     FROM anayltics_routes
-    WHERE (:from_date IS NULL OR created_at >= :from_date)
-      AND (:to_date IS NULL OR created_at <= :to_date)
-    GROUP BY analytic_code, grp
-    ORDER BY start_date
+    $where_sql
+    GROUP BY from_station_id, to_station_id
+    ORDER BY route_taken_count DESC, total_distance DESC 
 ";
 
 $stmt = db()->prepare($sql);
-$stmt->execute([
-    ":from_date" => $from_date,
-    ":to_date" => $to_date
-]);
+$stmt->execute($sql_params);
 
 $items = [];
 while ($row = $stmt->fetch()) {
     $items[] = [
-        "analyticCode" => $row["analytic_code"],
-        "totalDistanceKm" => (float)$row["total"],
-        "periodStart" => $row["start_date"],
-        "periodEnd" => $row["end_date"],
-        "group" => $row["grp"]
+        "fromStation" => $row["from_station_id"],
+        "toStation" => $row["to_station_id"],
+        "totalDistanceKm" => (float)$row["total_distance"],
+        "routeTakenCount" => (int)$row["route_taken_count"]
     ];
 }
 
 json_response([
     "from_date" => $from_date,
     "to_date" => $to_date,
-    "groupBy" => $group,
     "items" => $items
 ]);

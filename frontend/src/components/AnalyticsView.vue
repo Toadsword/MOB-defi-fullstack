@@ -3,14 +3,6 @@
     <h2>Analytics</h2>
 
     <div>
-      <label>Group By: </label>
-      <select v-model="groupBy">
-        <option value="none">None</option>
-        <option value="day">Day</option>
-        <option value="month">Month</option>
-        <option value="year">Year</option>
-      </select>
-
       <label>From Date: </label>
       <input type="date" v-model="fromDate" />
 
@@ -23,21 +15,19 @@
     <table v-if="items.length">
       <thead>
         <tr>
-          <th>Analytic Code</th>
+          <th>Route Taken Count</th>
+          <th>From Station</th>
+          <th>To Station</th>
           <th>Total Distance</th>
-          <th>Period Start</th>
-          <th>Period End</th>
-          <th>Group</th>
         </tr>
       </thead>
 
       <tbody>
         <tr v-for="(item, i) in items" :key="i">
-          <td>{{ item.analyticCode }}</td>
+          <td>{{ item.routeTakenCount }}</td>
+          <td>{{ item.fromStation }}</td>
+          <td>{{ item.toStation }}</td>
           <td>{{ item.totalDistanceKm }}</td>
-          <td>{{ item.periodStart }}</td>
-          <td>{{ item.periodEnd }}</td>
-          <td>{{ item.group }}</td>
         </tr>
       </tbody>
     </table>
@@ -51,7 +41,6 @@ import { ref, onMounted } from "vue";
 import { fetchAnalytics } from "../api.js";
 
 const items = ref([]);
-const groupBy = ref("none");
 const fromDate = ref(""); // New ref for from date
 const toDate = ref("");   // New ref for to date
 const error = ref(null);
@@ -61,12 +50,17 @@ async function load() {
 
   try {
     const res = await fetchAnalytics({ 
-      groupBy: groupBy.value,
       fromDate: fromDate.value, // Include fromDate
       toDate: toDate.value      // Include toDate
     });
-    items.value = res.items;
+
+    if (res && res.items) {  // Check if response is valid
+      items.value = res.items;
+    } else {
+      throw new Error("Invalid response format");  // Throw error if response is not as expected
+    }
   } catch (err) {
+    console.error(err);  // Log the error for debugging
     error.value = "Failed to load analytics";
   }
 }

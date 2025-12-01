@@ -22,7 +22,7 @@ switch ($requestUri) {
         break;
 
     case '/api/analytics': // Include /api prefix
-        if ($requestMethod === 'GET') {
+        if ($requestMethod === 'POST') {
             require __DIR__ . '/api/routes/get_analytics.php';
         }
         break;

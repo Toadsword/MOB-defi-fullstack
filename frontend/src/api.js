@@ -13,5 +13,6 @@ export async function fetchAnalytics(data) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   });
+  console.log(res)
   return res.json();
 }
