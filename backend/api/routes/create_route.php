@@ -35,9 +35,12 @@ if (!$result) {
 $path = $result["path"];
 $distance = $result["distance"];
 
+// Convert PHP array to PostgreSQL array format
+$pathArray = '{' . implode(',', array_map(fn($p) => '"' . addslashes($p) . '"', $path)) . '}';
+
 // Insert into DB
 $stmt = $db->prepare("
-    INSERT INTO routes (from_station_id, to_station_id, analytic_code, distance_km, path)
+    INSERT INTO anayltics_routes (from_station_id, to_station_id, analytic_code, distance_km, path)
     VALUES (:f, :t, :a, :d, :p)
     RETURNING id, created_at
 ");
@@ -47,7 +50,7 @@ $stmt->execute([
     ":t" => $to,
     ":a" => $analytic,
     ":d" => $distance,
-    ":p" => $path
+    ":p" => $pathArray
 ]);
 
 $row = $stmt->fetch();

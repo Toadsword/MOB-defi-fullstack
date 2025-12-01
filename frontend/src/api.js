@@ -1,5 +1,5 @@
 export async function createRoute(data) {
-  const res = await fetch("/api/routes", {
+  const res = await fetch("/api/routes/create_route.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
