@@ -24,13 +24,15 @@ $where_sql = $where ? "WHERE " . implode(" AND ", $where) : "";
 
 $sql = "
     SELECT 
-        from_station_id,
-        to_station_id,
-        SUM(distance_km) AS total_distance,
+        from_station.longName AS from_station_id,
+        to_station.longName AS to_station_id,
+        distance_km AS total_distance,
         COUNT(*) AS route_taken_count 
     FROM anayltics_routes
+    INNER JOIN stations AS from_station ON anayltics_routes.from_station_id = from_station.shortName
+    INNER JOIN stations AS to_station ON anayltics_routes.to_station_id = to_station.shortName
     $where_sql
-    GROUP BY from_station_id, to_station_id
+    GROUP BY from_station.longName, to_station.longName, distance_km
     ORDER BY route_taken_count DESC, total_distance DESC 
 ";
 

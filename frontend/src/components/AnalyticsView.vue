@@ -27,7 +27,7 @@
           <td>{{ item.routeTakenCount }}</td>
           <td>{{ item.fromStation }}</td>
           <td>{{ item.toStation }}</td>
-          <td>{{ item.totalDistanceKm }}</td>
+          <td>{{ item.totalDistanceKm }}km</td>
         </tr>
       </tbody>
     </table>
