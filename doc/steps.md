@@ -99,3 +99,30 @@ CREATE TABLE routes (
 ```
 
 Et ajouté cette table dans le test
+
+### 4.4 OAuth
+
+Accéder aux statistiques demande un accès autorisé. Cet accès devrait être possible uniquement au travers d'une authentification et vérification des utilisateurs. Une page de login/logout/register est donc nécessaire.
+Pour des raisons de tests en local et pour gagner du temps, la vérification de compte est désactivé lors de la création d'un nouveau compte.
+
+Table pour Postgres:
+```
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    verified BOOLEAN NOT NULL DEFAULT FALSE,
+    is_admin BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+
+## 5. Interface graphique
+Maintenant que nous avons tous les éléments backend en place, il est temps de créer les vues nécessaires pour assurer une bonne navigation entre les écrans
+
+### 5.1. Routing
+Création du routage et de la navigation pour accéder à toutes les pages du site internet :
+- Home (Checking d'une route et création pour les analytics)
+- Analytics (accessible uniquement si loggé)
+- Login (Pour la création de compte et la connexion)
