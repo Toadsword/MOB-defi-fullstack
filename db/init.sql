@@ -1,10 +1,24 @@
--- Création des tables stations et distances
+
+
+-- Create Users table for OAuth
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    verified BOOLEAN NOT NULL DEFAULT FALSE,
+    is_admin BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Creating Stations table 
 CREATE TABLE stations (
     id SERIAL PRIMARY KEY,
     shortName VARCHAR(5) UNIQUE NOT NULL,
     longName VARCHAR(255) NOT NULL
 );
 
+-- Creating Distances table
 CREATE TABLE distances (
     transport_name VARCHAR(10) NOT NULL,
     fk_parent_stations VARCHAR(5) NOT NULL,
@@ -18,6 +32,7 @@ CREATE TABLE distances (
         REFERENCES stations(shortName)
 );
 
+-- Creating Analytics table
 CREATE TABLE anayltics_routes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     from_station_id VARCHAR(5) NOT NULL REFERENCES stations(shortName),
@@ -28,7 +43,7 @@ CREATE TABLE anayltics_routes (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Insertion des données
+-- Inserting initial data into Stations table, provided in the task description
 INSERT INTO stations (id, shortName, longName) VALUES
     (1, 'ALLI', 'Allières'),
     (2, 'AVA', 'Les Avants'),
@@ -133,6 +148,7 @@ INSERT INTO stations (id, shortName, longName) VALUES
     (108, 'IO', 'Interlaken Ost');
 
 
+-- Inserting initial data into distances table, provided in the task description
 INSERT INTO distances (transport_name, fk_parent_stations, fk_child_stations, distance) VALUES
     ('MOB','MX','CGE',0.65),
     ('MOB','CGE','VUAR',0.35),
