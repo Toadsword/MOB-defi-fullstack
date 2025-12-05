@@ -21,6 +21,11 @@ done
 
 echo "Running tests..."
 
+# Test users exists
+docker exec defi-fullstack-db-1 psql -U admin_user -d mydb -c "\dt users" | grep users >/dev/null \
+  && echo "✔ users exists" \
+  || (echo "✘ users does NOT exist" && sleep 5 && exit 1)
+
 # Test stations exists
 docker exec defi-fullstack-db-1 psql -U admin_user -d mydb -c "\dt stations" | grep stations >/dev/null \
   && echo "✔ stations exists" \
