@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="authenticated">
     <h2>Analytics</h2>
 
     <div>
@@ -34,34 +34,39 @@
 
     <p v-if="error" style="color: red">{{ error }}</p>
   </div>
+  <div v-else>
+    <p>Please <router-link to="/login">login</router-link> to view analytics.</p>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { fetchAnalytics } from "../api.js";
+import { ref, onMounted } from 'vue';
+import { useAuth } from '../composables/userAuth.js';
+import { fetchAnalytics } from '../api.js';
 
+const { authenticated } = useAuth();
 const items = ref([]);
-const fromDate = ref(""); // New ref for from date
-const toDate = ref("");   // New ref for to date
+const fromDate = ref('');
+const toDate = ref('');
 const error = ref(null);
 
 async function load() {
   error.value = null;
 
   try {
-    const res = await fetchAnalytics({ 
-      fromDate: fromDate.value, // Include fromDate
-      toDate: toDate.value      // Include toDate
+    const res = await fetchAnalytics({
+      fromDate: fromDate.value,
+      toDate: toDate.value
     });
 
-    if (res && res.items) {  // Check if response is valid
+    if (res && res.items) {
       items.value = res.items;
     } else {
-      throw new Error("Invalid response format");  // Throw error if response is not as expected
+      throw new Error('Invalid response format');
     }
   } catch (err) {
-    console.error(err);  // Log the error for debugging
-    error.value = "Failed to load analytics";
+    console.error(err);
+    error.value = 'Failed to load analytics';
   }
 }
 
